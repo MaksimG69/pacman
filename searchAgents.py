@@ -401,6 +401,7 @@ def cornersHeuristic(state, problem):
 				distance_and_corners.append((mazeDistance(s, actual_state, problem.gameState), s))
 				trigger += 1
 			else:
+				# print(s, actual_state, mazeDistance(s,actual_state,problem.gameState), util.manhattanDistance(s,actual_state))
 				distance_and_corners.append((util.manhattanDistance(s, actual_state), s))
 		distance_and_actual_state = min(distance_and_corners)
 		actual_state = distance_and_actual_state[1]
@@ -506,25 +507,23 @@ def foodHeuristic(state, problem):
 	Subsequent calls to this heuristic can access
 	problem.heuristicInfo['wallCount']
 	"""
+	def	calculateDistanceWithWalls(point1, point2, gameState):
+		x1, y1 = point1
+		x2, y2 = point2
+		walls = gameState.getWalls()
+		assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
+		assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+		prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
+		return len(search.aStarSearch(prob, manhattanHeuristic))
 	position, food_grid = state
-
 	food_list = food_grid.asList()
 	if len(food_list) == 0:
 		return 0
 	# find next food
-
-	heuristic_sum = 0
 	heuristics = []
 	for next_food in food_list:
-		heuristics.append(mazeDistance(position, next_food, problem.gameState))
-	# print("Manhattans min: ", manhattan[0], manhattan[1])
-	position = max(heuristics)
-	# for next_food in food_list:
-	# 	heuristics.append(mazeDistance(position, next_food, problem.gameState))
-
-	# print("Maze min: ", maze[0], maze[1])
+		heuristics.append(calculateDistanceWithWalls(position, next_food, problem.gameState))
 	heuristic_sum = max(heuristics)
-	"*** YOUR CODE HERE ***"
 	return heuristic_sum
 
 
