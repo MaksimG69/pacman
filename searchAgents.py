@@ -362,7 +362,7 @@ class CornersProblem(search.SearchProblem):
 
 
 """
-The heuristic is consistent because it returns the cost in an environment without walls 
+Q6:The heuristic is consistent because it returns the cost in an environment without walls 
 and with that we have made reduce the problem to a relaxed problem and since 
 manhattan distance provides exactly the distance between two points we ensure that it is 
 never bigger than the real cost
@@ -475,8 +475,8 @@ def mazeDistanceAstar(point1, point2, gameState):
     return len(search.aStarSearch(prob, manhattanHeuristic))
 
 
-"""
-the heuristic calculates the costs that we need to visit the furthest food so that the problem
+""" 
+ Q7: the heuristic calculates the costs that we need to visit the furthest food so that the problem
  has been reduced to a  more relaxed problem and that way we have ensured that it is consistent 
 """
 
