@@ -361,6 +361,14 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
+"""
+The heuristic is consistent because it returns the cost in an environment without walls 
+and with that we have made reduce the problem to a relaxed problem and since 
+manhattan distance provides exactly the distance between two points we ensure that it is 
+never bigger than the real cost
+"""
+
+
 def cornersHeuristic(state, problem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -377,7 +385,6 @@ def cornersHeuristic(state, problem):
     corners = problem.corners  # These are the corner coordinates
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
     res = 0
     (currState, visitedCorners) = state
     notVisitedCorners = [x for x in corners if x not in visitedCorners]
@@ -458,6 +465,22 @@ class AStarFoodSearchAgent(SearchAgent):
         self.searchType = FoodSearchProblem
 
 
+def mazeDistanceAstar(point1, point2, gameState):
+    x1, y1 = point1
+    x2, y2 = point2
+    walls = gameState.getWalls()
+    assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
+    assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+    prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
+    return len(search.aStarSearch(prob, manhattanHeuristic))
+
+
+"""
+the heuristic calculates the costs that we need to visit the furthest food so that the problem
+ has been reduced to a  more relaxed problem and that way we have ensured that it is consistent 
+"""
+
+
 def foodHeuristic(state, problem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -487,26 +510,10 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    """foodpos = []
-    (x, y) = 0, 0
-    for row in foodGrid:
-        x = 0
-        for cell in row:
-            if cell:
-                foodpos.append((x, y))
-            x += 1
-        y += 1
-    # first we calculate the distance from our position to the closest corner then from that corner to there other one
-    if foodpos:
-        (dist, currFod) = max([(util.manhattanDistance(position, currFod), currFod) for currFod in foodpos])
-        foodpos.remove(currFod)
-        res = dist
-    return len(foodpos)"""
     res = 0
     foodpos = foodGrid.asList()
     if foodpos:
-        res = max([mazeDistance(position, currFood, problem.startingGameState) for currFood in foodpos])
+        res = max([mazeDistanceAstar(position, currFood, problem.startingGameState) for currFood in foodpos])
     return res
 
 
