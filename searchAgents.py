@@ -476,8 +476,10 @@ def mazeDistanceAstar(point1, point2, gameState):
 
 
 """ 
- Q7: the heuristic calculates the costs that we need to visit the furthest food so that the problem
- has been reduced to a  more relaxed problem and that way we have ensured that it is consistent 
+ Q7:the heuristic decides on the basis of the auxiliary function which peace 
+ have the furthest path to the pacman position with the help of the aStar.
+ taking the walls into account, and that way we ensure that this will never be greater 
+ then the cost of the optimal solution so it is consistent 
 """
 
 
