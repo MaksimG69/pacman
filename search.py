@@ -19,6 +19,8 @@ Pacman agents (in searchAgents.py).
 from builtins import reversed
 
 import util
+# fot manhattanHeuristic test import searchAgents
+import searchAgents
 
 
 class SearchProblem:
@@ -138,19 +140,24 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
 	"""Search the node of least total cost first."""
 	"*** YOUR CODE HERE ***"
-	func = lambda x: x[2]
+
 	# hier weiter schreiben
-	result = util.PriorityQueueWithFunction(func)
-	tmp = problem.getStartState()
-	for s in problem.getSuccessors(tmp):
-		result.push(s)
+	frontier = util.PriorityQueue()
+	visited = [problem.getStartState()]
+	frontier.push((problem.getStartState(), [], 0), 0)
 
+	while not frontier.isEmpty():
+		v, actions, total_cost = frontier.pop()
+		if problem.isGoalState(v):
+			return actions
+		for s in problem.getSuccessors(v):
+			p, a, c = s
+			if p not in visited:
+				visited.append(p)
+				frontier.push((p, actions + [a], total_cost + c), total_cost + c)
+			elif problem.isGoalState(p):
+				frontier.push((p, actions + [a], total_cost + c), total_cost + c)
 
-
-	while not result.isEmpty():
-		p,a,c = result.pop()
-		print(p,a,c)
-	return []
 	util.raiseNotDefined()
 
 
@@ -165,8 +172,21 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
 	"""Search the node that has the lowest combined cost and heuristic first."""
 	"*** YOUR CODE HERE ***"
+	frontier = util.PriorityQueue()
+	visited = [problem.getStartState()]
+	frontier.push((problem.getStartState(), [], 0), 0)
+	while not frontier.isEmpty():
+		v, actions, total_cost = frontier.pop()
+		if problem.isGoalState(v):
+			return actions
+		for s in problem.getSuccessors(v):
+			p, a, c = s
+			if p not in visited:
+				visited.append(p)
+				frontier.push((p, actions + [a], total_cost + c), total_cost + c + heuristic(p, problem))
+			elif problem.isGoalState(p):
+				frontier.update((p, actions + [a], total_cost + c), total_cost + c + heuristic(p, problem))
 	util.raiseNotDefined()
-
 
 # Abbreviations
 bfs = breadthFirstSearch
